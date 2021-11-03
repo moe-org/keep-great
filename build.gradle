@@ -1,0 +1,66 @@
+//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+// The build.gradle is a part of project utopia, under MIT License.
+// See https://opensource.org/licenses/MIT for license information.
+// Copyright (c) 2021 moe-org All rights reserved.
+//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+plugins {
+    id 'java-library'
+    id 'checkstyle'
+}
+
+group 'moe.kawayi.org'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    compileOnly "com.puppycrawl.tools:checkstyle:9.1"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileJava{
+    options.encoding("UTF-8")
+    options.setEncoding("UTF-8")
+    options.forkOptions.jvmArgs << '-Dfile.encoding=UTF-8' << '-Duser.language=es'
+}
+
+
+checkstyle {
+
+    ignoreFailures = false
+
+    configFile = file("${rootDir}/checkstyle.xml")
+
+    checkstyleMain {
+        dependsOn jar
+
+        checkstyleClasspath += files("D:\\Project\\keep-great-check\\build\\libs\\keep-great-check-1.0-SNAPSHOT.jar")
+
+        showViolations = true
+
+        maxErrors = 1000
+        maxWarnings = 1000
+    }
+    checkstyleTest{
+        dependsOn jar
+
+        checkstyleClasspath += files("${rootDir}/output-package/keep-project-great.jar")
+
+        maxErrors = 1000
+        maxWarnings = 1000
+    }
+}
+
+jar{
+    archiveName("keep-project-great.jar")
+    destinationDirectory.set(file("${rootDir}/output-package/"))
+}
