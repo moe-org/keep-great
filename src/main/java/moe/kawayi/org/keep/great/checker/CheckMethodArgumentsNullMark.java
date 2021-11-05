@@ -152,7 +152,6 @@ public class CheckMethodArgumentsNullMark extends AbstractCheck {
             return;
         }
 
-        // 检查
         checkNullMark(annotation);
     }
 

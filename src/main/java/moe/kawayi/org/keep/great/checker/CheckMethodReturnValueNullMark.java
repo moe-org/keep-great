@@ -107,6 +107,11 @@ public class CheckMethodReturnValueNullMark extends AbstractCheck {
         return true;
     }
 
+    /**
+     * 检查ast及其Sibling是否有单行注释符合ignoreCheckMarkRegex
+     * @param ast
+     * @return
+     */
     private boolean checkIfIgnoreComment(@Nullable DetailAST ast){
 
         // 检查注释
@@ -166,8 +171,16 @@ public class CheckMethodReturnValueNullMark extends AbstractCheck {
     @Override
     public void visitToken(@NotNull DetailAST ast) {
 
+        var type = ast.findFirstToken(TokenTypes.TYPE);
+
         // 检查是否为void或者其他基本类型（即不可为null的类型）
-        if(AstUtil.checkIfNonNullType(ast.findFirstToken(TokenTypes.TYPE))){
+        if(AstUtil.checkIfNonNullType(type)){
+            return;
+        }
+
+        // 对于type，检查注释（如果没有修饰符，则注释将会生成在type ast下）
+        if(checkIfIgnoreComment(type.getFirstChild())){
+            // 忽略
             return;
         }
 
@@ -183,10 +196,8 @@ public class CheckMethodReturnValueNullMark extends AbstractCheck {
             return;
         }
 
-        // 检查注释
-        var ignoreComment = modifiers.findFirstToken(TokenTypes.SINGLE_LINE_COMMENT);
-
-        if(checkIfIgnoreComment(ignoreComment)){
+        // 对于有修饰符的，检查注释在修饰符ast之下
+        if(checkIfIgnoreComment(modifiers.getFirstChild())){
             // 忽略
             return;
         }

@@ -16,6 +16,8 @@ public class AstUtil {
 
     /**
      * 如果输入的类型是不为null的类型（void和int等基本类型）， 返回true
+     *
+     * 输入type ast
      * @param ast
      * @return
      */
@@ -28,9 +30,12 @@ public class AstUtil {
                 // 不为null
                 ast != null
                         &&
-                        // 只有一个子ast（即基本类型关键字本身）
+                        // 只有一个子ast（即基本类型关键字本身），排除注释
                         // 防止int[] 等被当作基本类型
-                        ast.getChildCount() == 1
+                        (
+                                (ast.getChildCount() -
+                                        ast.getChildCount(TokenTypes.SINGLE_LINE_COMMENT) -
+                                        ast.getChildCount(TokenTypes.BLOCK_COMMENT_BEGIN)) == 1)
                         &&
                         // 查找基本类型关键字
                         (
@@ -45,15 +50,5 @@ public class AstUtil {
                                         || ast.findFirstToken(TokenTypes.LITERAL_CHAR) != null
                         );
     }
-
-
-
-
-
-
-
-
-
-
 
 }
