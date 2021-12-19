@@ -125,6 +125,17 @@ public class CheckMethodArgumentsNullMark extends AbstractCheck {
 
     @Override
     public void visitToken(@NotNull DetailAST ast) {
+        // 检查父对象
+        var parent = ast.getParent();
+        if(parent == null || parent.getType() != TokenTypes.PARAMETERS){
+            return;
+        }
+
+        var pParent = parent.getParent();
+        if(pParent == null || pParent.getType() != TokenTypes.METHOD_DEF){
+            return;
+        }
+
         var type = ast.findFirstToken(TokenTypes.TYPE);
 
         // 检查类型
